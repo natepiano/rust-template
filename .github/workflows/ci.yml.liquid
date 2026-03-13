@@ -145,8 +145,8 @@ jobs:
           df -h
 
       # Build only test targets here. Example compilation belongs in Build Check.
-      - name: Run lib and integration tests
-        run: cargo nextest run --all-features --workspace --lib --tests
+      - name: Run test targets
+        run: cargo nextest run --all-features --workspace --tests
 {% if bevy %}
         env:
           WGPU_BACKEND: "gl"
