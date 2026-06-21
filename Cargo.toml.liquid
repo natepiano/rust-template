@@ -1,4 +1,21 @@
-[package]
+{% if workspace_member %}[package]
+authors.workspace    = true
+categories           = [{% assign _cats = categories | split: "," %}{% for c in _cats %}"{{ c | strip }}"{% unless forloop.last %}, {% endunless %}{% endfor %}]
+description          = "{{description}}"
+edition.workspace    = true
+homepage             = "{{homepage_url}}"
+keywords             = [{% assign _kws = keywords | split: "," %}{% for k in _kws %}"{{ k | strip }}"{% unless forloop.last %}, {% endunless %}{% endfor %}]
+license.workspace    = true
+name                 = "{{project-name}}"
+readme               = "README.md"
+repository.workspace = true
+{% if published %}version = "0.1.0"{% else %}version.workspace = true{% endif %}
+
+[lints]
+workspace = true
+
+[dependencies]
+{% else %}[package]
 authors    = ["natepiano"]
 edition    = "2024"
 homepage   = "https://github.com/natepiano/{{project-name}}"
@@ -40,3 +57,4 @@ wildcard_imports       = "allow" # Bevy prelude convention
 missing_docs = "deny"
 
 [dependencies]
+{% endif %}

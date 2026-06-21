@@ -1,4 +1,7 @@
-# {{project-name}}
+{% if workspace_member %}# {{project-name}}
+
+{{description}}
+{% else %}# {{project-name}}
 
 [![CI](https://github.com/natepiano/{{project-name}}/actions/workflows/ci.yml/badge.svg)](https://github.com/natepiano/{{project-name}}/actions/workflows/ci.yml)
 [![crates.io](https://img.shields.io/crates/v/{{project-name}}.svg)](https://crates.io/crates/{{project-name}})
@@ -13,3 +16,4 @@ cd {{project-name}}
 cargo build
 cargo run
 ```
+{% endif %}

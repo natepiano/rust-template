@@ -1,13 +1,54 @@
 [template]
-cargo_generate_version = ">=0.10.0"
+cargo_generate_version = ">=0.18.0"
+exclude = [".DS_Store", "**/.DS_Store"]
 
 [placeholders.bevy]
 type = "bool"
-prompt = "Include Bevy CI support?"
+prompt = "Include Bevy support?"
 default = true
 
+[placeholders.workspace_member]
+type = "bool"
+prompt = "Generate as a workspace member (thin manifest, no standalone CI/git)?"
+default = false
+
+# `.claude` is the template's own local dev config; it must never land in a
+# generated project. With `cargo generate --path` the working tree is copied
+# verbatim (a git clone would have skipped this untracked dir), so drop it
+# explicitly. Every generation is exactly one of bin/lib, so listing it in both
+# covers member and standalone alike.
 [conditional.'crate_type == "lib"']
-ignore = ["src/main.rs"]
+ignore = ["src/main.rs", ".claude"]
 
 [conditional.'crate_type == "bin"']
-ignore = ["src/lib.rs"]
+ignore = ["src/lib.rs", ".claude"]
+
+# A workspace member inherits CI, formatting config, lints, and VCS from the
+# host workspace, so the standalone copies are dropped at generation time.
+[conditional.'workspace_member']
+ignore = [".github", ".gitignore", "rustfmt.toml", "taplo.toml"]
+
+[conditional.'workspace_member'.placeholders.published]
+type = "bool"
+prompt = "Published independently to crates.io (per-crate version instead of the workspace version)?"
+default = false
+
+[conditional.'workspace_member'.placeholders.description]
+type = "string"
+prompt = "Crate description"
+default = ""
+
+[conditional.'workspace_member'.placeholders.keywords]
+type = "string"
+prompt = "Keywords (comma-separated; non-empty — clippy::cargo_common_metadata denies empty)"
+default = ""
+
+[conditional.'workspace_member'.placeholders.categories]
+type = "string"
+prompt = "Categories (comma-separated crates.io category slugs; non-empty)"
+default = ""
+
+[conditional.'workspace_member'.placeholders.homepage_url]
+type = "string"
+prompt = "Homepage URL (the crate's subdir in the host monorepo)"
+default = ""
